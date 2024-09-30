@@ -29,7 +29,7 @@ RUN conda install -y -c conda-forge \
 # Nvidia Apex for mixed-precision inference
 RUN git clone https://github.com/NVIDIA/apex.git /build/apex
 WORKDIR /build/apex
-RUN pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" .
+RUN python3 setup.py install
 
 RUN pip install --upgrade cython
 RUN pip install --upgrade gil_load
