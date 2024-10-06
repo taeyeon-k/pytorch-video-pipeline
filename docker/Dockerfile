@@ -1,8 +1,8 @@
-FROM nvcr.io/nvidia/deepstream:5.0-20.07-triton
+FROM nvcr.io/nvidia/deepstream:6.3-gc-triton-devel
 
 RUN apt-get update && apt install --no-install-recommends -y \
     ca-certificates \
-    python-gst-1.0 \
+    python3-gst-1.0 \
     wget
 
 # allow GObject to find typelibs
@@ -15,16 +15,24 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86
     ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh
 
 ENV PATH /opt/conda/bin:${PATH}
-ENV LD_LIBRARY_PATH /usr/local/cuda-10.2/compat:/opt/conda/lib:/opt/nvidia/deepstream/deepstream-5.0/lib:${LD_LIBRARY_PATH}
+ENV LD_LIBRARY_PATH /usr/local/cuda-11.8/compat:/opt/conda/lib:/opt/nvidia/deepstream/deepstream-6.3/lib:${LD_LIBRARY_PATH}
 
-RUN conda install -y -c pytorch \
-    cudatoolkit=10.2 \
-    pytorch \
-    torchvision
+RUN conda install -y -c pytorch -c nvidia\
+    cudatoolkit==11.8 \
+    pytorch==2.4.1 \
+    torchvision==0.19.1 \
+    pytorch-cuda=11.8
 
 RUN conda install -y -c conda-forge \
     pygobject \
-    scikit-image
+    scikit-image \
+    ncurses
+
+# Check the current version
+# RUN nvcc --version
+# RUN ls /usr/local/cuda-11.8
+# RUN python -c "import torch; print(torch.__version__) ; print(torch.cuda.is_available())"
+# RUN python -c "import torchvision; print(torchvision.__version__)"
 
 # Nvidia Apex for mixed-precision inference
 RUN git clone https://github.com/NVIDIA/apex.git /build/apex
