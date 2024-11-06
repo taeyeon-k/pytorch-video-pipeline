@@ -177,7 +177,7 @@ def postprocess(locs, labels):
         nms_mask = torchvision.ops.boxes.batched_nms(
             flat_locs,
             flat_probs,
-            class_indexes * image_indexes,
+            class_indexes * (image_indexes * 81),
             iou_threshold=0.7
         )
 
